@@ -14,10 +14,14 @@ public:
     UltimateTagBot(const std::string &tag);
 
     int Run();
-
+private:
     void OnAddTag(TgBot::Message::Ptr message);
 
     void OnRemoveTag(TgBot::Message::Ptr message);
 
     void OnMessage(TgBot::Message::Ptr message);
+
+    void OnListTags(TgBot::Message::Ptr message);
+
+    void Error(int32_t char_id, std::string str);
 };
