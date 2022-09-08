@@ -4,12 +4,13 @@
 #include <vector>
 #include <unordered_map>
 #include <tgbot/Bot.h>
+#include "tag_database.hpp"
 
 using TagList = std::vector<std::string>;
 
 class UltimateTagBot: TgBot::Bot{
 private:
-    std::unordered_map<std::string, TagList> m_TagMap;
+    TagDatabase m_DB;
 public:
     UltimateTagBot(const std::string &tag);
 

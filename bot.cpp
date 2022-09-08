@@ -51,10 +51,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     if(!tags.size())
         return Error(message->chat->id, "Zero tags supplied");
 
-    TagList &list = m_TagMap[keytag];
-
-    for(auto &tag: tags)
-        list.push_back(std::move(tag));
+    m_DB.AddTagsFor(message->chat->id, keytag, tags);
 }
 
 void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
@@ -70,19 +67,12 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(arg[0] != '@')
             continue;
 
-        std::string tag(arg.c_str() + 1, arg.size() - 1);
+        std::string keytag(arg.c_str() + 1, arg.size() - 1);
 
-        auto tag_list = m_TagMap.find(tag);
-
-        if(tag_list == m_TagMap.end())
+        if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
 
-        if(!tag_list->second.size())
-            continue;
-
-        std::string reply;
-        for(const std::string &tag: tag_list->second)
-            reply += "@" + tag + " ";
+        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag);
         
         if(reply.size())
             getApi().sendMessage(message->chat->id, reply);
@@ -91,7 +81,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
 
 void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
     std::string reply = "Registered tags in this chat";
-
+#if 0
     for(const auto &[keytag, tags]: m_TagMap){
         reply += '\n';
         reply += keytag + ":";
@@ -100,6 +90,7 @@ void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
             reply += " " + tag;
         }
     }
+#endif
     getApi().sendMessage(message->chat->id, reply);
 }
 

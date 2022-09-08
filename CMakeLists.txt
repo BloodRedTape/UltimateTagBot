@@ -10,6 +10,7 @@ add_executable(UltimateTagBot
     "./main.cpp"
     "./bot.cpp"
     "./args_iterator.cpp"
+    "./tag_database.cpp"
 )
 
 target_link_libraries(UltimateTagBot
