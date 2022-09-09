@@ -152,7 +152,6 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
 }
 
 void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
-
     for(ArgsIterator it(message->text.c_str()); it; ++it){
         std::string arg = it.Current();
 
@@ -164,7 +163,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
 
-        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag);
+        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag, message->from->username);
         
         if(reply.size())
             getApi().sendMessage(message->chat->id, reply);

@@ -67,16 +67,19 @@ void JsonTagDatabase::RemoveTagsFor(int64_t chat_id, const std::string &keytag, 
     SaveToFile();
 }
 
-std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::string &keytag){
+std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::string &keytag, const std::string &tagger){
     if(!HasKeytag(chat_id, keytag)) 
         return {};
-    
+    puts(tagger.c_str());
     TagSet &set = m_Map[chat_id][keytag];
 
     std::string message;
 
     for(const auto &tag: set)
-        message += tag + ' ';
+        if(tag != '@' + tagger)
+            message += tag + ' ';
+        else 
+            message += tagger + ' ';
 
     return message;
 }
