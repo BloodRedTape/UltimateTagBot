@@ -10,7 +10,7 @@ using TagList = std::vector<std::string>;
 
 class UltimateTagBot: TgBot::Bot{
 private:
-    TagDatabase m_DB;
+    JsonTagDatabase m_DB = "db.json";
 public:
     UltimateTagBot(const std::string &tag);
 
