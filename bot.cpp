@@ -43,16 +43,13 @@ UltimateTagBot::UltimateTagBot(const std::string &tag):
 }
 
 int UltimateTagBot::Run(){
-    try{
+    {
         TgBot::TgLongPoll long_poll(*this);
 
         while(true){
             long_poll.start();
         }
 
-    }catch(const std::exception &e){
-        printf("%s\n", e.what());
-        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
@@ -206,6 +203,6 @@ void UltimateTagBot::OnListKeytags(TgBot::Message::Ptr message){
         Error(message->chat->id, "No keytags created, use /new_keytag [keytag] to create one.");
 }
 
-void UltimateTagBot::Error(int32_t chat_id, std::string str){
+void UltimateTagBot::Error(int64_t chat_id, std::string str){
     getApi().sendMessage(chat_id, str);
 }

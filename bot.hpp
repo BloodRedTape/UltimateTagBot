@@ -30,5 +30,5 @@ private:
 
     void OnListKeytags(TgBot::Message::Ptr message);
 
-    void Error(int32_t char_id, std::string str);
+    void Error(int64_t char_id, std::string str);
 };

@@ -9,36 +9,39 @@ JsonTagDatabase::JsonTagDatabase(const char *filename):
     m_Filename(filename)
 {
     std::ifstream t(m_Filename);
-    if(!t.is_open())
+    if(!t.is_open()){
+        puts("Db is not created");
         return;
+    }
 
     t.seekg(0, std::ios::end);
     size_t size = t.tellg();
     std::string buffer(size, ' ');
     t.seekg(0);
     t.read(&buffer[0], size); 
-    m_Map = json::parse(buffer);
+    if(buffer.size())
+        m_Map = json::parse(buffer);
 }
 
-void JsonTagDatabase::CreateKeytag(int32_t chat_id, const std::string &keytag){
+void JsonTagDatabase::CreateKeytag(int64_t chat_id, const std::string &keytag){
     m_Map[chat_id][keytag];
 
     SaveToFile();
 }
 
-bool JsonTagDatabase::HasKeytag(int32_t chat_id, const std::string &keytag){
+bool JsonTagDatabase::HasKeytag(int64_t chat_id, const std::string &keytag){
     TagMap &tag_map = m_Map[chat_id];
 
     return tag_map.find(keytag) != tag_map.end();
 }
 
-void JsonTagDatabase::DestroyKeytag(int32_t chat_id, const std::string &keytag){
+void JsonTagDatabase::DestroyKeytag(int64_t chat_id, const std::string &keytag){
     m_Map[chat_id].erase(keytag);
 
     SaveToFile();
 }
 
-bool JsonTagDatabase::HasTag(int32_t chat_id, const std::string &keytag, const std::string &tag){
+bool JsonTagDatabase::HasTag(int64_t chat_id, const std::string &keytag, const std::string &tag){
     if(!HasKeytag(chat_id, keytag))
         return false;
     TagSet &tag_set = m_Map[chat_id][keytag];
@@ -46,7 +49,7 @@ bool JsonTagDatabase::HasTag(int32_t chat_id, const std::string &keytag, const s
     return tag_set.find(tag) != tag_set.end(); 
 }
 
-void JsonTagDatabase::AddTagsFor(int32_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
+void JsonTagDatabase::AddTagsFor(int64_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
     TagSet &tag_set = m_Map[chat_id][keytag];
 
     for(const auto &tag: tags)
@@ -55,7 +58,7 @@ void JsonTagDatabase::AddTagsFor(int32_t chat_id, const std::string &keytag, con
     SaveToFile();
 }
 
-void JsonTagDatabase::RemoveTagsFor(int32_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
+void JsonTagDatabase::RemoveTagsFor(int64_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
     TagSet &tag_set = m_Map[chat_id][keytag];
 
     for(const auto &tag: tags)
@@ -64,7 +67,7 @@ void JsonTagDatabase::RemoveTagsFor(int32_t chat_id, const std::string &keytag, 
     SaveToFile();
 }
 
-std::string JsonTagDatabase::GetTaggingMessage(int32_t chat_id, const std::string &keytag){
+std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::string &keytag){
     if(!HasKeytag(chat_id, keytag)) 
         return {};
     
@@ -78,14 +81,14 @@ std::string JsonTagDatabase::GetTaggingMessage(int32_t chat_id, const std::strin
     return message;
 }
 
-std::string JsonTagDatabase::GetKeytagsList(int32_t chat_id){
+std::string JsonTagDatabase::GetKeytagsList(int64_t chat_id){
     std::string res;
     for(const auto &[keytag, _]: m_Map[chat_id])
         res += keytag + ' ';
     return res;
 }
 
-std::string JsonTagDatabase::GetTagsList(int32_t chat_id, const std::string &keytag){
+std::string JsonTagDatabase::GetTagsList(int64_t chat_id, const std::string &keytag){
     if(!HasKeytag(chat_id, keytag))
         return {};
 
