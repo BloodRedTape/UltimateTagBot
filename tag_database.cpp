@@ -45,7 +45,16 @@ std::string TagDatabase::GetTaggingMessage(int32_t chat_id, const std::string &k
     std::string message;
 
     for(const auto &tag: set)
-        message += '@' + tag + ' ';
+        message += tag + ' ';
 
     return message;
+}
+
+std::string TagDatabase::GetKeytagsList(int32_t chat_id){
+    std::string result;
+
+    for(const auto &keytag: m_Map[chat_id]){
+
+    }
+    return {};
 }

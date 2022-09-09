@@ -26,4 +26,6 @@ public:
     void RemoveTagsFor(int32_t chat_id, const std::string &keytag, const std::vector<std::string> &tags);
 
     std::string GetTaggingMessage(int32_t chat_id, const std::string &keytag);
+
+    std::string GetKeytagsList(int32_t chat_id);
 };

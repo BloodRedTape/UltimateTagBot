@@ -16,6 +16,10 @@ public:
 
     int Run();
 private:
+    void OnNewKeytag(TgBot::Message::Ptr message);
+
+    void OnDeleteKeytag(TgBot::Message::Ptr message);
+
     void OnAddTag(TgBot::Message::Ptr message);
 
     void OnRemoveTag(TgBot::Message::Ptr message);
