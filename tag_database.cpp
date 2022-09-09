@@ -5,6 +5,13 @@
 
 using json = nlohmann::json;
 
+std::string ToLowerCase(std::string str){
+    for(char &ch: str)
+        if(ch >= 'A' && ch <= 'Z')
+            ch += 'a' - 'A';
+    return str;
+}
+
 JsonTagDatabase::JsonTagDatabase(const char *filename):
     m_Filename(filename)
 {
@@ -76,7 +83,7 @@ std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::strin
     std::string message;
 
     for(const auto &tag: set)
-        if(tag != '@' + tagger)
+        if(ToLowerCase(tag) != '@' + ToLowerCase(tagger))
             message += tag + ' ';
         else 
             message += tagger + ' ';
