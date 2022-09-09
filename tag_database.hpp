@@ -28,4 +28,6 @@ public:
     std::string GetTaggingMessage(int32_t chat_id, const std::string &keytag);
 
     std::string GetKeytagsList(int32_t chat_id);
+
+    std::string GetTagsList(int32_t chat_id, const std::string &keytag);
 };

@@ -34,6 +34,9 @@ UltimateTagBot::UltimateTagBot(const std::string &tag):
     getEvents().onCommand("remove_tag", [this](TgBot::Message::Ptr message){
         OnRemoveTag(message);
     });
+    getEvents().onCommand("list_keytags", [this](TgBot::Message::Ptr message){
+        OnListKeytags(message);
+    });
     getEvents().onCommand("list_tags", [this](TgBot::Message::Ptr message){
         OnListTags(message);
     });
@@ -172,18 +175,35 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
 }
 
 void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
-    std::string reply = "Registered tags in this chat";
-#if 0
-    for(const auto &[keytag, tags]: m_TagMap){
-        reply += '\n';
-        reply += keytag + ":";
+    ArgsIterator it(message->text.c_str());
+    it.Advance();
+    if(!it)
+        return Error(message->chat->id, "Please supply keytag name, /list_tags [keytag]");
 
-        for(const auto &tag: tags){
-            reply += " " + tag;
-        }
-    }
-#endif
-    getApi().sendMessage(message->chat->id, reply);
+    std::string keytag = it.Current(); it.Advance();
+
+    if(!IsValidKeytag(keytag))
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+
+    if(!m_DB.HasKeytag(message->chat->id, keytag))
+        return Error(message->chat->id, "Keytag '" + keytag + "' does not exist, use /new_keytag [keytag]");
+
+    std::string list = m_DB.GetTagsList(message->chat->id, keytag);
+
+    if(list.size())
+        getApi().sendMessage(message->chat->id, list);
+    else
+        Error(message->chat->id, "No tags added to keytag '" + keytag + "', use /add_tag [keytag] [tag1] [tag2] .. [tagN]");
+
+}
+
+void UltimateTagBot::OnListKeytags(TgBot::Message::Ptr message){
+    std::string list = m_DB.GetKeytagsList(message->chat->id);
+
+    if(list.size())
+        getApi().sendMessage(message->chat->id, list);
+    else
+        Error(message->chat->id, "No keytags created, use /new_keytag [keytag] to create one.");
 }
 
 void UltimateTagBot::Error(int32_t chat_id, std::string str){

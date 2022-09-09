@@ -51,10 +51,19 @@ std::string TagDatabase::GetTaggingMessage(int32_t chat_id, const std::string &k
 }
 
 std::string TagDatabase::GetKeytagsList(int32_t chat_id){
-    std::string result;
+    std::string res;
+    for(const auto &[keytag, _]: m_Map[chat_id])
+        res += keytag + ' ';
+    return res;
+}
 
-    for(const auto &keytag: m_Map[chat_id]){
+std::string TagDatabase::GetTagsList(int32_t chat_id, const std::string &keytag){
+    if(!HasKeytag(chat_id, keytag))
+        return {};
 
-    }
-    return {};
+    std::string res;    
+    for(const auto &tag: m_Map[chat_id][keytag])
+        res += tag.substr(1, tag.size()) + ' ';
+
+    return res;
 }
