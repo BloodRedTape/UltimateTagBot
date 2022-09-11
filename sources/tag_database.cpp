@@ -39,6 +39,7 @@ bool JsonTagDatabase::HasTag(int64_t chat_id, const std::string &keytag, const s
 }
 
 void JsonTagDatabase::AddTagsFor(int64_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
+    assert(HasKeytag(chat_id, keytag));
     TagSet &tag_set = m_Map[chat_id][keytag];
 
     for(const auto &tag: tags)
@@ -48,6 +49,7 @@ void JsonTagDatabase::AddTagsFor(int64_t chat_id, const std::string &keytag, con
 }
 
 void JsonTagDatabase::RemoveTagsFor(int64_t chat_id, const std::string &keytag, const std::vector<std::string> &tags){
+    assert(HasKeytag(chat_id, keytag));
     TagSet &tag_set = m_Map[chat_id][keytag];
 
     for(const auto &tag: tags)
@@ -59,23 +61,13 @@ const TagSet &JsonTagDatabase::GetTagsFor(int64_t chat_id, const Keytag &keytag)
     return m_Map[chat_id][keytag];
 }
 
-std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::string &keytag){
-    if(!HasKeytag(chat_id, keytag)) 
-        return {};
-    TagSet &set = m_Map[chat_id][keytag];
-
-    std::string message;
-
-    for(const auto &tag: set)
-        message += '@' + tag + ' ';
-
-    return message;
-}
-
 std::string JsonTagDatabase::GetKeytagsList(int64_t chat_id){
     std::string res;
     for(const auto &[keytag, _]: m_Map[chat_id])
-        res += keytag + ' ';
+        res += keytag + '\n';
+
+    if(res.size())
+        res.back() = '\0';
     return res;
 }
 
@@ -85,7 +77,10 @@ std::string JsonTagDatabase::GetTagsList(int64_t chat_id, const std::string &key
 
     std::string res;    
     for(const auto &tag: m_Map[chat_id][keytag])
-        res += tag + ' ';
+        res += tag + '\n';
+    
+    if(res.size())
+        res.back() = '\0';
 
     return res;
 }

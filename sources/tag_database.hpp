@@ -31,8 +31,6 @@ public:
 
     const TagSet &GetTagsFor(int64_t chat_id, const Keytag &keytag);
 
-    std::string GetTaggingMessage(int64_t chat_id, const std::string &keytag);
-
     std::string GetKeytagsList(int64_t chat_id);
 
     std::string GetTagsList(int64_t chat_id, const std::string &keytag);
