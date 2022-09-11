@@ -12,6 +12,8 @@ To associate tag with a keytag run /add_tag
 ```
 /add_tag all @bloodredtape
 ```
+Btw, you can add multiple tags to a keytag
+
 
 Now if bot detects @all in a chat message, it would tag @bloodredtape
 
