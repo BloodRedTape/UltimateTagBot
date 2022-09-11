@@ -20,4 +20,6 @@ public:
     operator bool()const{
         return IsValid();
     }
+
+    static bool IsKeytagChar(char ch);
 };

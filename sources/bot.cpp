@@ -155,7 +155,18 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(arg[0] != '@')
             continue;
 
-        Keytag keytag = arg.substr(1, arg.size() - 1);
+        std::string keytag_text;
+        for(char ch: arg.substr(1, arg.size() - 1)){
+            if(!Keytag::IsKeytagChar(ch))
+                break;
+
+            keytag_text.push_back(ch);
+        }
+
+        Keytag keytag = keytag_text; 
+
+        if(!keytag)
+            continue;
 
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
