@@ -4,6 +4,7 @@
 #include <string_view>
 #include "args_iterator.hpp"
 #include "utils.hpp"
+#include "tag.hpp"
 
 bool IsValidTag(const std::string &tag){
     return tag.size() > 1 && tag[0] == '@' && CountChars('@', tag) == 1;
@@ -96,9 +97,9 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
 
     TagList tags;
     for(;it; ++it){
-        auto tag = it.Current();
-        if(IsValidTag(tag))
-            if(!m_DB.HasKeytag(message->chat->id, ToLowerCase(tag)))
+        Tag tag = it.Current();
+        if(tag)
+            if(!m_DB.HasKeytag(message->chat->id, tag))
                 tags.push_back(tag);
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list");
@@ -128,9 +129,9 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
 
     TagList tags;
     for(;it; ++it){
-        auto tag = it.Current();
-        if(IsValidTag(tag))
-            if(!m_DB.HasKeytag(message->chat->id, ToLowerCase(tag)))
+        Tag tag = it.Current();
+        if(tag)
+            if(!m_DB.HasKeytag(message->chat->id, tag))
                 tags.push_back(tag);
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list, therefore can't be removed");
@@ -151,7 +152,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(arg[0] != '@')
             continue;
 
-        Keytag keytag = std::string(arg.c_str() + 1, arg.size() - 1);
+        Keytag keytag = arg.substr(1, arg.size() - 1);
 
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;

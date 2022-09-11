@@ -76,7 +76,7 @@ std::string JsonTagDatabase::GetTaggingMessage(int64_t chat_id, const std::strin
     std::string message;
 
     for(const auto &tag: set)
-        message += tag + ' ';
+        message += '@' + tag + ' ';
 
     return message;
 }
@@ -94,7 +94,7 @@ std::string JsonTagDatabase::GetTagsList(int64_t chat_id, const std::string &key
 
     std::string res;    
     for(const auto &tag: m_Map[chat_id][keytag])
-        res += tag.substr(1, tag.size()) + ' ';
+        res += tag + ' ';
 
     return res;
 }

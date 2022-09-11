@@ -14,6 +14,7 @@ add_executable(UltimateTagBot
     "./sources/args_iterator.cpp"
     "./sources/tag_database.cpp"
     "./sources/keytag.cpp"
+    "./sources/tag.cpp"
 )
 
 target_link_libraries(UltimateTagBot
