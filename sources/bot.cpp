@@ -104,7 +104,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list");
         else
-            Error(message->chat->id, "Invalid tag '" + tag + "'");
+            Error(message->chat->id, "Invalid tag '" + it.Current() + "'");
     }
 
     if(!tags.size())
@@ -136,7 +136,7 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list, therefore can't be removed");
         else
-            Error(message->chat->id, "Invalid tag '" + tag + "'");
+            Error(message->chat->id, "Invalid tag '" + it.Current() + "'");
     }
 
     if(!tags.size())
@@ -157,10 +157,20 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
 
-        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag);
-        
-        if(reply.size())
-            getApi().sendMessage(message->chat->id, reply);
+        const auto &tag_set = m_DB.GetTagsFor(message->chat->id, keytag);
+
+        int tags = 0;
+        std::string reply;
+        for(const auto &tag: tag_set){
+            reply += '@' + tag + ' ';
+            tags++;
+
+            if(tags == MaxTagsInMessage){
+                getApi().sendMessage(message->chat->id, reply);
+                reply = {};
+            }
+        } 
+        getApi().sendMessage(message->chat->id, reply);
     }    
 }
 

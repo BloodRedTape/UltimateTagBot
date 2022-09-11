@@ -9,6 +9,7 @@
 using TagList = std::vector<std::string>;
 
 class UltimateTagBot: TgBot::Bot{
+    static constexpr auto MaxTagsInMessage = 5;
 private:
     JsonTagDatabase m_DB = "db.json";
 public:

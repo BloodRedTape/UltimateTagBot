@@ -15,14 +15,12 @@ static bool IsValidCharacters(const std::string &tag){
 Tag::Tag(std::string tag){
     if(!tag.size() || tag[0] != '@')
         return;
-    std::string keytag = tag.substr(1, tag.size() - 1);
-    
-    if(!(keytag.size() >= MinLength && keytag.size() <= MaxLength) || !IsValidCharacters(keytag))
-        return;
-    
-    assign(ToLowerCase(keytag));
+
+    assign(ToLowerCase(tag.substr(1, tag.size() - 1)));
 }
 
 bool Tag::IsValid()const{
-    return size(); 
+    if(!(size() >= MinLength && size() <= MaxLength) || !IsValidCharacters(*this))
+        return false;
+    return true; 
 }
