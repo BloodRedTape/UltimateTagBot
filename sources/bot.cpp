@@ -148,7 +148,22 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     m_DB.RemoveTagsFor(message->chat->id, keytag, tags);
 }
 
+template <typename T, typename E>
+void PushBackUnique(T &collection, E element){
+    bool found = false;
+    for(const E &e: collection){
+        if(e == element){
+            found = true;
+            break;
+        }
+    }
+    if(!found)
+        collection.push_back(std::move(element));
+}
+
 void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
+    std::vector<Keytag> keytags;
+
     for(ArgsIterator it(message->text.c_str()); it; ++it){
         std::string arg = it.Current();
 
@@ -168,6 +183,10 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(!keytag)
             continue;
 
+        PushBackUnique(keytags, std::move(keytag));
+    }    
+
+    for(const auto &keytag: keytags){
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
 
@@ -185,7 +204,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
             }
         } 
         getApi().sendMessage(message->chat->id, reply);
-    }    
+    }
 }
 
 void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
