@@ -3,13 +3,7 @@
 #include <exception>
 #include <string_view>
 #include "args_iterator.hpp"
-
-int CountChars(char ch, const std::string &string){
-    int count = 0;
-    for(char e: string)
-        count += e == ch;
-    return count;
-}
+#include "utils.hpp"
 
 bool IsValidTag(const std::string &tag){
     return tag.size() > 1 && tag[0] == '@' && CountChars('@', tag) == 1;
@@ -63,7 +57,7 @@ void UltimateTagBot::OnNewKeytag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /new_keytag [keytag]");
 
-    std::string keytag = it.Current(); it.Advance();
+    std::string keytag = ToLowerCase(it.Current()); it.Advance();
 
     if(!IsValidKeytag(keytag))
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
@@ -79,7 +73,7 @@ void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /delete_keytag [keytag]");
 
-    std::string keytag = it.Current(); it.Advance();
+    std::string keytag = ToLowerCase(it.Current()); it.Advance();
 
     if(!IsValidKeytag(keytag))
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
@@ -96,7 +90,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name and tag arguments, /add_tag [keytag] [tag1] [tag2] .. [tagN]");
 
-    std::string keytag = it.Current(); it.Advance();
+    std::string keytag = ToLowerCase(it.Current()); it.Advance();
 
     if(!IsValidKeytag(keytag))
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
@@ -108,7 +102,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     for(;it; ++it){
         auto tag = it.Current();
         if(IsValidTag(tag))
-            if(!m_DB.HasKeytag(message->chat->id, tag))
+            if(!m_DB.HasKeytag(message->chat->id, ToLowerCase(tag)))
                 tags.push_back(tag);
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list");
@@ -128,7 +122,7 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name and tag arguments, /remove_tag [keytag] [tag1] [tag2] .. [tagN]");
 
-    std::string keytag = it.Current(); it.Advance();
+    std::string keytag = ToLowerCase(it.Current()); it.Advance();
 
     if(!IsValidKeytag(keytag))
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
@@ -140,7 +134,7 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     for(;it; ++it){
         auto tag = it.Current();
         if(IsValidTag(tag))
-            if(!m_DB.HasKeytag(message->chat->id, tag))
+            if(!m_DB.HasKeytag(message->chat->id, ToLowerCase(tag)))
                 tags.push_back(tag);
             else 
                 Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list, therefore can't be removed");
@@ -161,7 +155,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(arg[0] != '@')
             continue;
 
-        std::string keytag(arg.c_str() + 1, arg.size() - 1);
+        std::string keytag = ToLowerCase({arg.c_str() + 1, arg.size() - 1});
 
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
@@ -179,7 +173,7 @@ void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /list_tags [keytag]");
 
-    std::string keytag = it.Current(); it.Advance();
+    std::string keytag = ToLowerCase(it.Current()); it.Advance();
 
     if(!IsValidKeytag(keytag))
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");

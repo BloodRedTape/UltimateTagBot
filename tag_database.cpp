@@ -2,15 +2,9 @@
 #include <nlohmann/json.hpp>
 #include <iostream>
 #include <fstream>
+#include "utils.hpp"
 
 using json = nlohmann::json;
-
-std::string ToLowerCase(std::string str){
-    for(char &ch: str)
-        if(ch >= 'A' && ch <= 'Z')
-            ch += 'a' - 'A';
-    return str;
-}
 
 JsonTagDatabase::JsonTagDatabase(const char *filename):
     m_Filename(filename)

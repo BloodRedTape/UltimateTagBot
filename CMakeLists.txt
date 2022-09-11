@@ -10,11 +10,13 @@ add_subdirectory(thirdparty/json)
 add_executable(UltimateTagBot
     "./main.cpp"
     "./bot.cpp"
+    "./utils.cpp"
     "./args_iterator.cpp"
     "./tag_database.cpp"
 )
 
 target_link_libraries(UltimateTagBot
-    PUBLIC TgBot
-    PUBLIC nlohmann_json
+    TgBot
+    nlohmann_json
+    boost_locale
 )
