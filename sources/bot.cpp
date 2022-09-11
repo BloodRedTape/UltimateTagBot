@@ -34,6 +34,9 @@ UltimateTagBot::UltimateTagBot(const std::string &tag):
     getEvents().onCommand("list_tags", [this](TgBot::Message::Ptr message){
         OnListTags(message);
     });
+    getEvents().onUnknownCommand([this](TgBot::Message::Ptr message){
+        Error(message->chat->id, "Unknown command");
+    });
 }
 
 int UltimateTagBot::Run(){
