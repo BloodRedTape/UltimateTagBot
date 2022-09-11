@@ -28,6 +28,9 @@ UltimateTagBot::UltimateTagBot(const std::string &tag):
     getEvents().onCommand("new_keytag", [this](TgBot::Message::Ptr message){
         OnNewKeytag(message);
     });
+    getEvents().onCommand("delete_keytag", [this](TgBot::Message::Ptr message){
+        OnDeleteKeytag(message);
+    });
     getEvents().onCommand("add_tag", [this](TgBot::Message::Ptr message){
         OnAddTag(message);
     });
