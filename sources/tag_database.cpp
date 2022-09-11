@@ -9,19 +9,7 @@ using json = nlohmann::json;
 JsonTagDatabase::JsonTagDatabase(const char *filename):
     m_Filename(filename)
 {
-    std::ifstream t(m_Filename);
-    if(!t.is_open()){
-        puts("Db is not created");
-        return;
-    }
-
-    t.seekg(0, std::ios::end);
-    size_t size = t.tellg();
-    std::string buffer(size, ' ');
-    t.seekg(0);
-    t.read(&buffer[0], size); 
-    if(buffer.size())
-        m_Map = json::parse(buffer);
+    m_Map = json::parse(ReadEntireFile(filename));
 }
 
 void JsonTagDatabase::CreateKeytag(int64_t chat_id, const std::string &keytag){
@@ -103,10 +91,5 @@ std::string JsonTagDatabase::GetTagsList(int64_t chat_id, const std::string &key
 }
 
 void JsonTagDatabase::SaveToFile(){
-    std::string content = json(m_Map).dump();
-
-    std::ofstream stream(m_Filename);
-    if(!stream.is_open())
-        return (void)puts("Can't open json database");
-    stream.write(content.data(), content.size());
+    WriteEntireFile(m_Filename, json(m_Map).dump());
 }
