@@ -163,7 +163,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
 
-        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag, message->from->username);
+        std::string reply = m_DB.GetTaggingMessage(message->chat->id, keytag);
         
         if(reply.size())
             getApi().sendMessage(message->chat->id, reply);
