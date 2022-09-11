@@ -6,9 +6,11 @@ std::string ToLowerCase(std::string str){
     return boost::locale::to_lower(str, boost::locale::generator()(""));
 }
 
-int CountChars(char ch, const std::string &string){
+int CountChars(char ch, const char *string){
     int count = 0;
-    for(char e: string)
+    while(*string){
+        char e = *string++;
         count += e == ch;
+    }
     return count;
 }

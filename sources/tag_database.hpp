@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include "keytag.hpp"
 
 using TagSet = std::set<std::string>;
 using TagMap = std::unordered_map<std::string, TagSet>;

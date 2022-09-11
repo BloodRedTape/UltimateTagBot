@@ -8,11 +8,12 @@ add_subdirectory(thirdparty/tgbot-cpp)
 add_subdirectory(thirdparty/json)
 
 add_executable(UltimateTagBot
-    "./main.cpp"
-    "./bot.cpp"
-    "./utils.cpp"
-    "./args_iterator.cpp"
-    "./tag_database.cpp"
+    "./sources/main.cpp"
+    "./sources/bot.cpp"
+    "./sources/utils.cpp"
+    "./sources/args_iterator.cpp"
+    "./sources/tag_database.cpp"
+    "./sources/keytag.cpp"
 )
 
 target_link_libraries(UltimateTagBot
@@ -20,3 +21,5 @@ target_link_libraries(UltimateTagBot
     nlohmann_json
     boost_locale
 )
+
+target_include_directories(UltimateTagBot PRIVATE "./sources")

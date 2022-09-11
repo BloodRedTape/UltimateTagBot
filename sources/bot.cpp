@@ -9,10 +9,6 @@ bool IsValidTag(const std::string &tag){
     return tag.size() > 1 && tag[0] == '@' && CountChars('@', tag) == 1;
 }
 
-bool IsValidKeytag(const std::string &tag){
-    return tag.size() && !CountChars('@', tag);
-}
-
 UltimateTagBot::UltimateTagBot(const std::string &tag):
     TgBot::Bot(tag)
 {
@@ -57,10 +53,10 @@ void UltimateTagBot::OnNewKeytag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /new_keytag [keytag]");
 
-    std::string keytag = ToLowerCase(it.Current()); it.Advance();
+    Keytag keytag = it.Current(); it.Advance();
 
-    if(!IsValidKeytag(keytag))
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+    if(!keytag)
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@' and '#'");
     
     if(m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' is already created" );
@@ -73,10 +69,10 @@ void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /delete_keytag [keytag]");
 
-    std::string keytag = ToLowerCase(it.Current()); it.Advance();
+    Keytag keytag = it.Current(); it.Advance();
 
-    if(!IsValidKeytag(keytag))
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+    if(!keytag)
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@' and '#'");
     
     if(!m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exists" );
@@ -90,9 +86,9 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name and tag arguments, /add_tag [keytag] [tag1] [tag2] .. [tagN]");
 
-    std::string keytag = ToLowerCase(it.Current()); it.Advance();
+    Keytag keytag = it.Current(); it.Advance();
 
-    if(!IsValidKeytag(keytag))
+    if(!keytag)
         return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
 
     if(!m_DB.HasKeytag(message->chat->id, keytag))
@@ -122,10 +118,10 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name and tag arguments, /remove_tag [keytag] [tag1] [tag2] .. [tagN]");
 
-    std::string keytag = ToLowerCase(it.Current()); it.Advance();
+    Keytag keytag = it.Current(); it.Advance();
 
-    if(!IsValidKeytag(keytag))
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+    if(!keytag)
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@' and '#'");
 
     if(!m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exist, use /new_keytag [keytag]");
@@ -155,7 +151,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
         if(arg[0] != '@')
             continue;
 
-        std::string keytag = ToLowerCase({arg.c_str() + 1, arg.size() - 1});
+        Keytag keytag = std::string(arg.c_str() + 1, arg.size() - 1);
 
         if(!m_DB.HasKeytag(message->chat->id, keytag))
             continue;
@@ -173,10 +169,10 @@ void UltimateTagBot::OnListTags(TgBot::Message::Ptr message){
     if(!it)
         return Error(message->chat->id, "Please supply keytag name, /list_tags [keytag]");
 
-    std::string keytag = ToLowerCase(it.Current()); it.Advance();
+    Keytag keytag = it.Current(); it.Advance();
 
-    if(!IsValidKeytag(keytag))
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+    if(!keytag)
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@' and '#'");
 
     if(!m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exist, use /new_keytag [keytag]");
