@@ -203,7 +203,8 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
                 reply = {};
             }
         } 
-        getApi().sendMessage(message->chat->id, reply);
+        if(reply.size())
+            getApi().sendMessage(message->chat->id, reply);
     }
 }
 
