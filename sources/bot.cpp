@@ -34,9 +34,6 @@ UltimateTagBot::UltimateTagBot(const std::string &tag):
     getEvents().onCommand("list_tags", [this](TgBot::Message::Ptr message){
         OnListTags(message);
     });
-    getEvents().onUnknownCommand([this](TgBot::Message::Ptr message){
-        Error(message->chat->id, "Unknown command");
-    });
 }
 
 int UltimateTagBot::Run(){
@@ -66,6 +63,8 @@ void UltimateTagBot::OnNewKeytag(TgBot::Message::Ptr message){
         return Error(message->chat->id, "Keytag '" + keytag + "' is already created" );
     
     m_DB.CreateKeytag(message->chat->id, keytag);
+
+    Error(message->chat->id, "created new keytag '" + keytag + "'");
 }
 void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
     ArgsIterator it(message->text.c_str());
@@ -82,6 +81,8 @@ void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exists" );
     
     m_DB.DestroyKeytag(message->chat->id, keytag);
+
+    Error(message->chat->id, "deleted keytag '" + keytag + "'");
 }
 
 void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
@@ -114,6 +115,10 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
         return Error(message->chat->id, "No tags to add");
 
     m_DB.AddTagsFor(message->chat->id, keytag, tags);
+    std::string added_tags;
+    for(const auto &tag: tags)
+        added_tags += tag + ' ';
+    Error(message->chat->id, "added " + added_tags + "to keytag '" + keytag + "'");
 }
 
 void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
@@ -146,6 +151,11 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
         return Error(message->chat->id, "No tags to remove");
 
     m_DB.RemoveTagsFor(message->chat->id, keytag, tags);
+
+    std::string removed_tags;
+    for(const auto &tag: tags)
+        removed_tags += tag + ' ';
+    Error(message->chat->id, "removed " + removed_tags + "from keytag '" + keytag + "'");
 }
 
 template <typename T, typename E>
@@ -198,7 +208,7 @@ void UltimateTagBot::OnMessage(TgBot::Message::Ptr message){
             reply += '@' + tag + ' ';
             tags++;
 
-            if(tags == MaxTagsInMessage){
+            if(tags % MaxTagsInMessage == 0){
                 getApi().sendMessage(message->chat->id, reply);
                 reply = {};
             }
