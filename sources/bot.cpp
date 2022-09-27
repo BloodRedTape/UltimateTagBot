@@ -64,7 +64,7 @@ void UltimateTagBot::OnNewKeytag(TgBot::Message::Ptr message){
     
     m_DB.CreateKeytag(message->chat->id, keytag);
 
-    Error(message->chat->id, "created new keytag '" + keytag + "'");
+    Error(message->chat->id, "Created new keytag '" + keytag + "'");
 }
 void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
     ArgsIterator it(message->text.c_str());
@@ -82,7 +82,7 @@ void UltimateTagBot::OnDeleteKeytag(TgBot::Message::Ptr message){
     
     m_DB.DestroyKeytag(message->chat->id, keytag);
 
-    Error(message->chat->id, "deleted keytag '" + keytag + "'");
+    Error(message->chat->id, "Deleted keytag '" + keytag + "'");
 }
 
 void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
@@ -103,10 +103,14 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     for(;it; ++it){
         Tag tag = it.Current();
         if(tag)
-            if(!m_DB.HasKeytag(message->chat->id, tag))
+            if(!m_DB.HasKeytag(message->chat->id, tag)){
                 tags.push_back(tag);
-            else 
-                Error(message->chat->id, "Confilicted tag '" + tag + "', tag registered as keytag can't be added to tag list");
+            } else {
+                const auto &tag_set = m_DB.GetTagsFor(message->chat->id, Keytag(tag));
+
+                for(const auto &tag: tag_set)
+                    tags.push_back(tag);
+            }
         else
             Error(message->chat->id, "Invalid tag '" + it.Current() + "'");
     }
@@ -118,7 +122,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     std::string added_tags;
     for(const auto &tag: tags)
         added_tags += tag + ' ';
-    Error(message->chat->id, "added " + added_tags + "to keytag '" + keytag + "'");
+    Error(message->chat->id, "Added " + added_tags + "to keytag '" + keytag + "'");
 }
 
 void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
@@ -155,7 +159,7 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     std::string removed_tags;
     for(const auto &tag: tags)
         removed_tags += tag + ' ';
-    Error(message->chat->id, "removed " + removed_tags + "from keytag '" + keytag + "'");
+    Error(message->chat->id, "Removed " + removed_tags + "from keytag '" + keytag + "'");
 }
 
 template <typename T, typename E>
