@@ -94,7 +94,7 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
     Keytag keytag = it.Current(); it.Advance();
 
     if(!keytag)
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@'");
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should only contain A-Z, a-z and _ characters");
 
     if(!m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exist, use /new_keytag [keytag]");
@@ -134,7 +134,7 @@ void UltimateTagBot::OnRemoveTag(TgBot::Message::Ptr message){
     Keytag keytag = it.Current(); it.Advance();
 
     if(!keytag)
-        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should not contain '@' and '#'");
+        return Error(message->chat->id, "Conflicted keytag name '" + keytag + "', it should only contain A-Z, a-z and _ characters");
 
     if(!m_DB.HasKeytag(message->chat->id, keytag))
         return Error(message->chat->id, "Keytag '" + keytag + "' does not exist, use /new_keytag [keytag]");
