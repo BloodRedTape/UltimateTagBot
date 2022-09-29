@@ -101,18 +101,26 @@ void UltimateTagBot::OnAddTag(TgBot::Message::Ptr message){
 
     TagList tags;
     for(;it; ++it){
-        Tag tag = it.Current();
-        if(tag)
-            if(!m_DB.HasKeytag(message->chat->id, tag)){
-                tags.push_back(tag);
-            } else {
-                const auto &tag_set = m_DB.GetTagsFor(message->chat->id, Keytag(tag));
+        std::string current = it.Current();
+        Tag tag = current;
+        Keytag keytag(tag);
+        bool success = false;
+
+        if(keytag){
+            if(m_DB.HasKeytag(message->chat->id, keytag)){
+                const auto &tag_set = m_DB.GetTagsFor(message->chat->id, keytag);
 
                 for(const auto &tag: tag_set)
                     tags.push_back(tag);
+                success = true;
             }
-        else
-            Error(message->chat->id, "Invalid tag '" + it.Current() + "'");
+        }
+        if (tag && !success){
+            tags.push_back(tag);
+            success = true;
+        }
+        if(!success)
+            Error(message->chat->id, "Invalid tag '" + current + "'");
     }
 
     if(!tags.size())
